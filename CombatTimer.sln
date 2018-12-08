@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Combat", "Combat\Combat.csproj", "{A59295F5-E31A-414F-A6FD-41A8B9970530}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9D2704C4-3671-42C8-A313-FF3F66C7F397}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatTimer.Tests", "CombatTimer.Tests\CombatTimer.Tests.csproj", "{7896744F-095D-4AED-944E-9B61F415287E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{A59295F5-E31A-414F-A6FD-41A8B9970530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A59295F5-E31A-414F-A6FD-41A8B9970530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A59295F5-E31A-414F-A6FD-41A8B9970530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7896744F-095D-4AED-944E-9B61F415287E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7896744F-095D-4AED-944E-9B61F415287E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7896744F-095D-4AED-944E-9B61F415287E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7896744F-095D-4AED-944E-9B61F415287E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7896744F-095D-4AED-944E-9B61F415287E} = {9D2704C4-3671-42C8-A313-FF3F66C7F397}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C2E7ABC4-FE2D-47C5-89D7-A52D3522AADA}
