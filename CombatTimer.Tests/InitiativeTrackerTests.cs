@@ -54,7 +54,7 @@ namespace CombatTimer.Tests
         }
 
         [TestMethod]
-        public void NextThreeInitiative()
+        public void ThirdInitiative()
         {
             InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
 
@@ -64,7 +64,7 @@ namespace CombatTimer.Tests
                 nextUp = tracker.Next();
             }
 
-            Assert.AreEqual("Enemy #1", nextUp.Character.Name);
+            Assert.AreEqual("Wizard #1", nextUp.Character.Name);
         }
 
         [TestMethod]
@@ -78,6 +78,21 @@ namespace CombatTimer.Tests
             }
 
             Assert.AreEqual(2, tracker.CurrentRound);
+        }
+
+        [TestMethod]
+        public void FighterSecondRound()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            List<InitiativeRoll> turnOrder = new List<InitiativeRoll>();
+            for (int i = 0; i < 4; i++)
+            {
+                turnOrder.Add(tracker.Next());
+            }
+            tracker.Next();
+
+            Assert.AreEqual("Fighter #1", tracker.CurrentInitiative.Character.Name);
         }
     }
 }

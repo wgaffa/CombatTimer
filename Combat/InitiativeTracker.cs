@@ -9,9 +9,10 @@ namespace Combat
     public class InitiativeTracker
     {
         public int CurrentRound { get; private set; } = 1;
-        public int CurrentInitiative { get; private set; } = 1;
+        public InitiativeRoll CurrentInitiative { get; private set; }
 
         private List<InitiativeRoll> _initiatives = new List<InitiativeRoll>();
+        private List<InitiativeRoll> _combatantsActed = new List<InitiativeRoll>();
 
         public InitiativeTracker(IEnumerable<InitiativeRoll> initiatives)
         {
@@ -22,30 +23,41 @@ namespace Combat
                 throw new ArgumentException("atleast two combatants required", nameof(initiatives));
 
             _initiatives = initiatives.ToList();
-
-            CurrentInitiative = _initiatives.Max().RolledInitiative + 1;
         }
 
         public IReadOnlyList<InitiativeRoll> Initiatives => _initiatives.AsReadOnly();
 
         public InitiativeRoll Next()
         {
-            InitiativeRoll nextInititiative = _initiatives
-                .Where(x => x.RolledInitiative < CurrentInitiative)
-                .OrderByDescending(x => x.RolledInitiative)
-                .ThenByDescending(x => x.Character.Initiative)
-                .FirstOrDefault();
+            if (CurrentInitiative == null)
+                return BeginSkirmish();
 
-            bool newRound = nextInititiative == null;
+            _combatantsActed.Add(CurrentInitiative);
+            IEnumerable<InitiativeRoll> nextInitiativeList = _initiatives
+                .Except(_combatantsActed)
+                .Where(x => x.RolledInitiative <= CurrentInitiative.RolledInitiative)
+                .OrderByDescending(x => x.RolledInitiative)
+                .ThenByDescending(x => x.Character.Initiative);
+
+            InitiativeRoll nextInitiative = nextInitiativeList.FirstOrDefault();
+
+            bool newRound = nextInitiative == null;
             if (newRound)
             {
-                nextInititiative = _initiatives.Max();
+                nextInitiative = _initiatives.Max();
+                _combatantsActed.Clear();
                 CurrentRound++;
             }
 
-            CurrentInitiative = nextInititiative.RolledInitiative;
+            CurrentInitiative = nextInitiative;
 
-            return nextInititiative;
+            return nextInitiative;
+        }
+
+        private InitiativeRoll BeginSkirmish()
+        {
+            CurrentInitiative = _initiatives.Max();
+            return CurrentInitiative;
         }
     }
 }
