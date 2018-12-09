@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,29 @@ namespace Combat
 
             _currentCombatant = _initiativeTracker.Next().Character;
             _currentTurnStarted = DateTime.Now;
+            return _currentCombatant;
+        }
+
+        public Character Delay()
+        {
+            End();
+
+            _currentCombatant = _initiativeTracker.Delay().Character;
+            _currentTurnStarted = DateTime.Now;
+
+            return _currentCombatant;
+        }
+
+        public Character Resume(Character characterToResume)
+        {
+            InitiativeRoll initiativeToResume = _initiativeTracker.Initiatives.FirstOrDefault(x => x.Character == characterToResume);
+
+            if (initiativeToResume == null)
+                throw new InvalidOperationException("character was not found in the initiative tracker");
+
+            _currentTurnStarted = DateTime.Now;
+            _currentCombatant = _initiativeTracker.BumpInitiativeBeforeCurrent(initiativeToResume).Character;
+
             return _currentCombatant;
         }
 

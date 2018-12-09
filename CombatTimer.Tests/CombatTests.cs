@@ -70,5 +70,46 @@ namespace CombatTimer.Tests
 
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void DelayAddingOnCurrentTurn()
+        {
+            Skirmish combat = new Skirmish(_initiativeRolls);
+
+            combat.Next(); // Fighter
+            Character rogue = combat.Next(); // Rogue
+
+            Thread.Sleep(1000);
+            combat.Delay(); // Wiz
+            combat.Next(); // Enemy
+
+            combat.Resume(rogue);
+            Thread.Sleep(1000);
+            combat.End();
+
+            Assert.AreEqual(2, combat.Timers[0].RoundTimes[rogue].Seconds);
+        }
+
+        [TestMethod]
+        public void DelayUntilNextTurn()
+        {
+            Skirmish combat = new Skirmish(_initiativeRolls);
+
+            combat.Next(); // Fighter
+            combat.Next(); // Rogue
+            Character wizard = combat.Next();
+            Thread.Sleep(1000);
+            combat.Delay(); // Enemy
+            combat.Next(); // Fighter
+
+            combat.Resume(wizard); // Wizard
+            Thread.Sleep(1000);
+            combat.End();
+
+            List<int> wizardTimes = combat.Timers.Select(x => x.RoundTimes[wizard].Seconds).ToList();
+            List<int> expected = new List<int>() { 1, 1 };
+
+            CollectionAssert.AreEqual(expected, wizardTimes);
+        }
     }
 }
