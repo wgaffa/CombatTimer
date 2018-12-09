@@ -71,6 +71,20 @@ namespace Combat
             return CurrentInitiative;
         }
 
+        public InitiativeRoll Ready()
+        {
+            if (CurrentInitiative == null)
+                throw new InvalidOperationException("skirmish not started, unable to delay");
+
+            CurrentInitiative.ActionTaken = ActionTakenType.Ready;
+
+            InitiativeRoll nextInitiative = GetInitiativeOffset();
+
+            CurrentInitiative = nextInitiative ?? BeginNewRound();
+
+            return CurrentInitiative;
+        }
+
         private InitiativeRoll GetInitiativeOffset(int offset = 1)
         {
             int index = _initiatives.IndexOf(CurrentInitiative);
