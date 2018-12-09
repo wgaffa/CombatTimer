@@ -12,8 +12,11 @@ namespace Combat
         public InitiativeRoll CurrentInitiative { get; private set; }
 
         private List<InitiativeRoll> _initiatives = new List<InitiativeRoll>();
-        private List<InitiativeRoll> _combatantsActed = new List<InitiativeRoll>();
 
+        /// <summary>
+        /// Initialize a new instance of the <see cref="InitiativeTracker"/> class.
+        /// </summary>
+        /// <param name="initiatives">A collection of initiative rolls.</param>
         public InitiativeTracker(IEnumerable<InitiativeRoll> initiatives)
         {
             if (initiatives == null)
@@ -27,31 +30,48 @@ namespace Combat
 
         public IReadOnlyList<InitiativeRoll> Initiatives => _initiatives.AsReadOnly();
 
+        /// <summary>
+        /// Start the next turn.
+        /// </summary>
+        /// <returns>The next <see cref="InitiativeRoll"/> to act.</returns>
         public InitiativeRoll Next()
         {
             if (CurrentInitiative == null)
                 return BeginSkirmish();
 
-            _combatantsActed.Add(CurrentInitiative);
-            IEnumerable<InitiativeRoll> nextInitiativeList = _initiatives
-                .Except(_combatantsActed)
-                .Where(x => x.RolledInitiative <= CurrentInitiative.RolledInitiative)
+            End();
+            InitiativeRoll nextInitiative = _initiatives
+                .Where(x => x.ActionTaken != ActionTakenType.TurnComplete && x.RolledInitiative <= CurrentInitiative.RolledInitiative)
                 .OrderByDescending(x => x.RolledInitiative)
-                .ThenByDescending(x => x.Character.Initiative);
-
-            InitiativeRoll nextInitiative = nextInitiativeList.FirstOrDefault();
+                .ThenByDescending(x => x.Character.Initiative)
+                .FirstOrDefault();
 
             bool newRound = nextInitiative == null;
             if (newRound)
             {
-                nextInitiative = _initiatives.Max();
-                _combatantsActed.Clear();
-                CurrentRound++;
+                nextInitiative = BeginNewRound();
             }
 
             CurrentInitiative = nextInitiative;
 
             return nextInitiative;
+        }
+
+        private InitiativeRoll BeginNewRound()
+        {
+            InitiativeRoll nextInitiative = _initiatives.Max();
+            foreach (InitiativeRoll initiative in _initiatives)
+            {
+                initiative.ActionTaken = ActionTakenType.None;
+            }
+
+            CurrentRound++;
+            return nextInitiative;
+        }
+
+        private void End()
+        {
+            CurrentInitiative.ActionTaken = ActionTakenType.TurnComplete;
         }
 
         private InitiativeRoll BeginSkirmish()

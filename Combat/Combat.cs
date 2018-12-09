@@ -20,18 +20,26 @@ namespace Combat
 
         public IReadOnlyList<RoundTimer> Timers => _roundTimers.AsReadOnly();
 
+        /// <summary>
+        /// Starts the next turn.
+        /// </summary>
+        /// <returns>The next Characters turn to act.</returns>
         public Character Next()
         {
-            EndLastTurn();
+            End();
 
             _currentCombatant = _initiativeTracker.Next().Character;
             _currentTurnStarted = DateTime.Now;
             return _currentCombatant;
         }
 
-        private void EndLastTurn()
+        /// <summary>
+        /// Ends the current turn.
+        /// </summary>
+        public void End()
         {
-            if (_currentCombatant == null)
+            bool firstRoundNotStarted = _currentCombatant == null;
+            if (firstRoundNotStarted)
                 return;
 
             TimeSpan turnTime = DateTime.Now - _currentTurnStarted;
