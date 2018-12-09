@@ -117,7 +117,7 @@ namespace CombatTimer.Tests
             tracker.Next(); // Wizard turn
             tracker.Next(); // Enemy turn
 
-            tracker.BumpInitiativeBeforeCurrent(delayedAction);
+            tracker.Resume(delayedAction);
 
             Assert.AreEqual(10, delayedAction.RolledInitiative);
         }
@@ -135,7 +135,7 @@ namespace CombatTimer.Tests
             tracker.Next(); // Enemey
             tracker.Next(); // Fighter
 
-            tracker.BumpInitiativeBeforeCurrent(delayedAction);
+            tracker.Resume(delayedAction);
 
             Assert.AreEqual(25, delayedAction.RolledInitiative);
         }
@@ -208,7 +208,7 @@ namespace CombatTimer.Tests
             tracker.Next(); // Wizard turn
             tracker.Next(); // Enemy turn
 
-            tracker.BumpInitiativeBeforeCurrent(delayedAction);
+            tracker.Resume(delayedAction);
 
             Assert.AreEqual(10, delayedAction.RolledInitiative);
         }
@@ -226,7 +226,7 @@ namespace CombatTimer.Tests
             tracker.Next(); // Enemey
             tracker.Next(); // Fighter
 
-            tracker.BumpInitiativeBeforeCurrent(delayedAction);
+            tracker.Resume(delayedAction);
 
             Assert.AreEqual(25, delayedAction.RolledInitiative);
         }

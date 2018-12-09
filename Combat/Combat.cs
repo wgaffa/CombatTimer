@@ -24,21 +24,35 @@ namespace Combat
         /// <summary>
         /// Starts the next turn.
         /// </summary>
-        /// <returns>The next Characters turn to act.</returns>
+        /// <returns>The next <see cref="Character"/> turn to act.</returns>
         public Character Next()
         {
-            End();
-
-            _currentCombatant = _initiativeTracker.Next().Character;
-            _currentTurnStarted = DateTime.Now;
-            return _currentCombatant;
+            return NewTurn(() => _initiativeTracker.Next().Character);
         }
 
+        /// <summary>
+        /// Delay the turn and act later, then get the next characters turn.
+        /// </summary>
+        /// <returns>The next <see cref="Character"/> turn to act.</returns>
         public Character Delay()
+        {
+            return NewTurn(() => _initiativeTracker.Delay().Character);
+        }
+
+        /// <summary>
+        /// Ready the turn and act later, then the next characters turn.
+        /// </summary>
+        /// <returns>The next <see cref="Character"/> turn to act.</returns>
+        public Character Ready()
+        {
+            return NewTurn(() => _initiativeTracker.Ready().Character);
+        }
+
+        private Character NewTurn(Func<Character> func)
         {
             End();
 
-            _currentCombatant = _initiativeTracker.Delay().Character;
+            _currentCombatant = func();
             _currentTurnStarted = DateTime.Now;
 
             return _currentCombatant;
@@ -51,10 +65,7 @@ namespace Combat
             if (initiativeToResume == null)
                 throw new InvalidOperationException("character was not found in the initiative tracker");
 
-            _currentTurnStarted = DateTime.Now;
-            _currentCombatant = _initiativeTracker.BumpInitiativeBeforeCurrent(initiativeToResume).Character;
-
-            return _currentCombatant;
+            return NewTurn(() => _initiativeTracker.Resume(initiativeToResume).Character);
         }
 
         /// <summary>

@@ -62,13 +62,7 @@ namespace Combat
             if (CurrentInitiative == null)
                 throw new InvalidOperationException("skirmish not started, unable to delay");
 
-            CurrentInitiative.ActionTaken = ActionTakenType.Delay;
-
-            InitiativeRoll nextInitiative = GetInitiativeOffset();
-
-            CurrentInitiative = nextInitiative ?? BeginNewRound();
-
-            return CurrentInitiative;
+            return PauseCurrentInitiative(ActionTakenType.Delay);
         }
 
         public InitiativeRoll Ready()
@@ -76,7 +70,24 @@ namespace Combat
             if (CurrentInitiative == null)
                 throw new InvalidOperationException("skirmish not started, unable to delay");
 
-            CurrentInitiative.ActionTaken = ActionTakenType.Ready;
+            return PauseCurrentInitiative(ActionTakenType.Ready);
+        }
+
+        public InitiativeRoll Resume(InitiativeRoll initiativeToResume)
+        {
+            initiativeToResume.ActionTaken = ActionTakenType.None;
+
+            BumpInitiativeBeforeCurrent(initiativeToResume);
+
+            CurrentInitiative = initiativeToResume;
+            CurrentInitiative.ActionTaken = ActionTakenType.None;
+
+            return initiativeToResume;
+        }
+
+        private InitiativeRoll PauseCurrentInitiative(ActionTakenType actionTaken)
+        {
+            CurrentInitiative.ActionTaken = actionTaken;
 
             InitiativeRoll nextInitiative = GetInitiativeOffset();
 
@@ -91,23 +102,15 @@ namespace Combat
             return _initiatives.ElementAtOrDefault(index + offset);
         }
 
-        public InitiativeRoll BumpInitiativeBeforeCurrent(InitiativeRoll initiativeToResume)
+        internal void BumpInitiativeBeforeCurrent(InitiativeRoll initiativeToResume)
         {
-            initiativeToResume.ActionTaken = ActionTakenType.None;
+            int nextInitiative = CurrentInitiative.RolledInitiative;
+            int previousInitiative = GetInitiativeOffset(-1)?.RolledInitiative ?? nextInitiative + 20;
 
-            InitiativeRoll nextInitiative = CurrentInitiative;
-            InitiativeRoll previousInitiative = GetInitiativeOffset(-1);
-
-            int previousInitiativeRoll = previousInitiative?.RolledInitiative ?? nextInitiative.RolledInitiative + 20;
-            int initiativeBetween = (previousInitiativeRoll + nextInitiative.RolledInitiative) / 2;
+            int initiativeBetween = (previousInitiative + nextInitiative) / 2;
             initiativeToResume.RolledInitiative = initiativeBetween;
 
-            CurrentInitiative = initiativeToResume;
-            CurrentInitiative.ActionTaken = ActionTakenType.None;
-
             SortInitiatives();
-
-            return CurrentInitiative;
         }
 
         private void SortInitiatives()
