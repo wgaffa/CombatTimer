@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,11 +41,7 @@ namespace Combat
                 return BeginSkirmish();
 
             End();
-            InitiativeRoll nextInitiative = _initiatives
-                .Where(x => x.ActionTaken != ActionTakenType.TurnComplete && x.RolledInitiative <= CurrentInitiative.RolledInitiative)
-                .OrderByDescending(x => x.RolledInitiative)
-                .ThenByDescending(x => x.Character.Initiative)
-                .FirstOrDefault();
+            InitiativeRoll nextInitiative = GetInitiativeOffset();
 
             bool newRound = nextInitiative == null;
             if (newRound)
@@ -52,9 +49,59 @@ namespace Combat
                 nextInitiative = BeginNewRound();
             }
 
+            if (nextInitiative.ActionTaken != ActionTakenType.None && nextInitiative.ActionTaken != ActionTakenType.TurnComplete)
+                nextInitiative.ActionTaken = ActionTakenType.None;
+
             CurrentInitiative = nextInitiative;
 
             return nextInitiative;
+        }
+
+        public InitiativeRoll Delay()
+        {
+            if (CurrentInitiative == null)
+                throw new InvalidOperationException("skirmish not started, unable to delay");
+
+            CurrentInitiative.ActionTaken = ActionTakenType.Delay;
+
+            InitiativeRoll nextInitiative = GetInitiativeOffset();
+
+            CurrentInitiative = nextInitiative ?? BeginNewRound();
+
+            return CurrentInitiative;
+        }
+
+        private InitiativeRoll GetInitiativeOffset(int offset = 1)
+        {
+            int index = _initiatives.IndexOf(CurrentInitiative);
+            return _initiatives.ElementAtOrDefault(index + offset);
+        }
+
+        public InitiativeRoll BumpInitiativeBeforeCurrent(InitiativeRoll initiativeToResume)
+        {
+            initiativeToResume.ActionTaken = ActionTakenType.None;
+
+            InitiativeRoll nextInitiative = CurrentInitiative;
+            InitiativeRoll previousInitiative = GetInitiativeOffset(-1);
+
+            int previousInitiativeRoll = previousInitiative?.RolledInitiative ?? nextInitiative.RolledInitiative + 20;
+            int initiativeBetween = (previousInitiativeRoll + nextInitiative.RolledInitiative) / 2;
+            initiativeToResume.RolledInitiative = initiativeBetween;
+
+            CurrentInitiative = initiativeToResume;
+            CurrentInitiative.ActionTaken = ActionTakenType.None;
+
+            SortInitiatives();
+
+            return CurrentInitiative;
+        }
+
+        private void SortInitiatives()
+        {
+            _initiatives = _initiatives
+                .OrderByDescending(x => x.RolledInitiative)
+                .ThenByDescending(x => x.Character.Initiative)
+                .ToList();
         }
 
         private InitiativeRoll BeginNewRound()
@@ -62,7 +109,8 @@ namespace Combat
             InitiativeRoll nextInitiative = _initiatives.Max();
             foreach (InitiativeRoll initiative in _initiatives)
             {
-                initiative.ActionTaken = ActionTakenType.None;
+                if (initiative.ActionTaken == ActionTakenType.TurnComplete)
+                    initiative.ActionTaken = ActionTakenType.None;
             }
 
             CurrentRound++;
@@ -71,11 +119,13 @@ namespace Combat
 
         private void End()
         {
+            Debug.Assert(CurrentInitiative != null);
             CurrentInitiative.ActionTaken = ActionTakenType.TurnComplete;
         }
 
         private InitiativeRoll BeginSkirmish()
         {
+            SortInitiatives();
             CurrentInitiative = _initiatives.Max();
             return CurrentInitiative;
         }
