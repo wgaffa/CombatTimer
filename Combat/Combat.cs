@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,14 +24,48 @@ namespace Combat
         /// <summary>
         /// Starts the next turn.
         /// </summary>
-        /// <returns>The next Characters turn to act.</returns>
+        /// <returns>The next <see cref="Character"/> turn to act.</returns>
         public Character Next()
+        {
+            return NewTurn(() => _initiativeTracker.Next().Character);
+        }
+
+        /// <summary>
+        /// Delay the turn and act later, then get the next characters turn.
+        /// </summary>
+        /// <returns>The next <see cref="Character"/> turn to act.</returns>
+        public Character Delay()
+        {
+            return NewTurn(() => _initiativeTracker.Delay().Character);
+        }
+
+        /// <summary>
+        /// Ready the turn and act later, then the next characters turn.
+        /// </summary>
+        /// <returns>The next <see cref="Character"/> turn to act.</returns>
+        public Character Ready()
+        {
+            return NewTurn(() => _initiativeTracker.Ready().Character);
+        }
+
+        private Character NewTurn(Func<Character> func)
         {
             End();
 
-            _currentCombatant = _initiativeTracker.Next().Character;
+            _currentCombatant = func();
             _currentTurnStarted = DateTime.Now;
+
             return _currentCombatant;
+        }
+
+        public Character Resume(Character characterToResume)
+        {
+            InitiativeRoll initiativeToResume = _initiativeTracker.Initiatives.FirstOrDefault(x => x.Character == characterToResume);
+
+            if (initiativeToResume == null)
+                throw new InvalidOperationException("character was not found in the initiative tracker");
+
+            return NewTurn(() => _initiativeTracker.Resume(initiativeToResume).Character);
         }
 
         /// <summary>

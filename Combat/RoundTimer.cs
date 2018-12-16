@@ -21,7 +21,10 @@ namespace Combat
             if (timeSpan == null)
                 throw new ArgumentNullException(nameof(timeSpan));
 
-            _roundTimes.Add(character, timeSpan);
+            if (_roundTimes.ContainsKey(character))
+                _roundTimes[character] += timeSpan;
+            else
+                _roundTimes.Add(character, timeSpan);
         }
     }
 }

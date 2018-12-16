@@ -9,6 +9,8 @@ namespace Combat
     public enum ActionTakenType
     {
         None,
+        Delay,
+        Ready,
         TurnComplete
     }
 
@@ -21,7 +23,7 @@ namespace Combat
         }
 
         public Character Character { get; private set; }
-        public int RolledInitiative { get; private set; }
+        public int RolledInitiative { get; internal set; }
         public ActionTakenType ActionTaken { get; set; }
 
         public int CompareTo(InitiativeRoll other)

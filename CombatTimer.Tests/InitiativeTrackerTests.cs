@@ -94,5 +94,181 @@ namespace CombatTimer.Tests
 
             Assert.AreEqual("Fighter #1", tracker.CurrentInitiative.Character.Name);
         }
+
+        [TestMethod]
+        public void DelayActionTakenSetToDelay()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            InitiativeRoll initiative = tracker.Next();
+            tracker.Delay();
+
+            Assert.AreEqual(ActionTakenType.Delay, initiative.ActionTaken);
+        }
+
+        [TestMethod]
+        public void ResumeNewInititative()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            InitiativeRoll delayedAction = tracker.Next();
+
+            tracker.Delay(); // Rogue turn
+            tracker.Next(); // Wizard turn
+            tracker.Next(); // Enemy turn
+
+            tracker.Resume(delayedAction);
+
+            Assert.AreEqual(10, delayedAction.RolledInitiative);
+        }
+
+        [TestMethod]
+        public void ResumeAtTop()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            tracker.Next(); // Fighter
+
+            InitiativeRoll delayedAction = tracker.Next(); // Rogue delay
+
+            tracker.Delay(); // Wizard
+            tracker.Next(); // Enemey
+            tracker.Next(); // Fighter
+
+            tracker.Resume(delayedAction);
+
+            Assert.AreEqual(25, delayedAction.RolledInitiative);
+        }
+
+        [TestMethod]
+        public void DelayUntilNextRound()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            tracker.Next(); // Fighter
+
+            InitiativeRoll rogueDelay = tracker.Next();
+            tracker.Delay(); // Wizard
+
+            for (int i = 0; i < 2; i++) // E, Fig
+            {
+                tracker.Next();
+            }
+
+            InitiativeRoll initiative = tracker.Next();
+
+            Assert.AreEqual("Rogue #1", initiative.Character.Name);
+        }
+
+        [TestMethod]
+        public void DelayUntilNextRoundActionIsNone()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            tracker.Next(); // Fighter
+
+            InitiativeRoll rogueDelay = tracker.Next();
+            tracker.Delay(); // Wizard
+
+            for (int i = 0; i < 2; i++) // E, Fig
+            {
+                tracker.Next();
+            }
+
+            InitiativeRoll initiative = tracker.Next();
+
+            Assert.AreEqual(ActionTakenType.None, initiative.ActionTaken);
+        }
+
+        [TestMethod]
+        public void OneCombatant()
+        {
+            Assert.ThrowsException<ArgumentException>(() => new InitiativeTracker(new List<InitiativeRoll>() { _initiativeRolls[0] }));
+        }
+
+        [TestMethod]
+        public void ReadyActionTakenSetToReady()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            InitiativeRoll initiative = tracker.Next();
+            tracker.Ready();
+
+            Assert.AreEqual(ActionTakenType.Ready, initiative.ActionTaken);
+        }
+
+        [TestMethod]
+        public void ReadyNewInititative()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            InitiativeRoll delayedAction = tracker.Next();
+
+            tracker.Ready(); // Rogue turn
+            tracker.Next(); // Wizard turn
+            tracker.Next(); // Enemy turn
+
+            tracker.Resume(delayedAction);
+
+            Assert.AreEqual(10, delayedAction.RolledInitiative);
+        }
+
+        [TestMethod]
+        public void ReadyResumeAtTop()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            tracker.Next(); // Fighter
+
+            InitiativeRoll delayedAction = tracker.Next(); // Rogue delay
+
+            tracker.Ready(); // Wizard
+            tracker.Next(); // Enemey
+            tracker.Next(); // Fighter
+
+            tracker.Resume(delayedAction);
+
+            Assert.AreEqual(25, delayedAction.RolledInitiative);
+        }
+
+        [TestMethod]
+        public void ReadyUntilNextRound()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            tracker.Next(); // Fighter
+
+            InitiativeRoll rogueDelay = tracker.Next();
+            tracker.Ready(); // Wizard
+
+            for (int i = 0; i < 2; i++) // E, Fig
+            {
+                tracker.Next();
+            }
+
+            InitiativeRoll initiative = tracker.Next();
+
+            Assert.AreEqual("Rogue #1", initiative.Character.Name);
+        }
+
+        [TestMethod]
+        public void ReadyUntilNextRoundActionIsNone()
+        {
+            InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
+
+            tracker.Next(); // Fighter
+
+            InitiativeRoll rogueDelay = tracker.Next();
+            tracker.Ready(); // Wizard
+
+            for (int i = 0; i < 2; i++) // E, Fig
+            {
+                tracker.Next();
+            }
+
+            InitiativeRoll initiative = tracker.Next();
+
+            Assert.AreEqual(ActionTakenType.None, initiative.ActionTaken);
+        }
     }
 }
