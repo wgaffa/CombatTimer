@@ -49,7 +49,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CombatTests.cs" />
+    <Compile Include="EncounterTimerTests.cs" />
     <Compile Include="InitiativeTrackerTests.cs" />
     <Compile Include="MockListRoller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
