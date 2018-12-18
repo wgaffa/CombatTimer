@@ -48,5 +48,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoundTimer.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\modules\Dice\Dice\Dice.csproj">
+      <Project>{53848598-e521-45f4-a3d5-fbfa812394e2}</Project>
+      <Name>Dice</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

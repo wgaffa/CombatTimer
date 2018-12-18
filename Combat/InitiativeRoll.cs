@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DMTools.Die;
+using DMTools.Die.Rollers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +22,20 @@ namespace Combat
         {
             Character = character ?? throw new ArgumentNullException(nameof(character));
             RolledInitiative = rolledInitiative;
+        }
+
+        public InitiativeRoll(Character character, IDiceRoller diceRoller = null)
+        {
+            Character = character ?? throw new ArgumentNullException(nameof(character));
+
+            RolledInitiative = RollNewInitiative(diceRoller);
+        }
+
+        private int RollNewInitiative(IDiceRoller diceRoller)
+        {
+            Dice dice = new Dice(20, diceRoller);
+
+            return Character.Initiative + dice.Roll();
         }
 
         public Character Character { get; private set; }
