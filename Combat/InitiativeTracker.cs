@@ -10,9 +10,10 @@ namespace Combat
     public class InitiativeTracker
     {
         public int CurrentRound { get; private set; } = 1;
+
         public InitiativeRoll CurrentInitiative { get; private set; }
 
-        private List<InitiativeRoll> _initiatives = new List<InitiativeRoll>();
+        private List<InitiativeRoll> _initiatives;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="InitiativeTracker"/> class.
@@ -35,7 +36,7 @@ namespace Combat
         /// Start the next turn.
         /// </summary>
         /// <returns>The next <see cref="InitiativeRoll"/> to act.</returns>
-        public InitiativeRoll Next()
+        public virtual InitiativeRoll Next()
         {
             if (CurrentInitiative == null)
                 return BeginSkirmish();
@@ -49,45 +50,37 @@ namespace Combat
                 nextInitiative = BeginNewRound();
             }
 
-            if (nextInitiative.ActionTaken != ActionTakenType.None && nextInitiative.ActionTaken != ActionTakenType.TurnComplete)
-                nextInitiative.ActionTaken = ActionTakenType.None;
+            if (nextInitiative.Status != InitiativeStatus.Active && nextInitiative.Status != InitiativeStatus.Complete)
+                nextInitiative.Status = InitiativeStatus.Active;
 
             CurrentInitiative = nextInitiative;
 
             return nextInitiative;
         }
 
-        public InitiativeRoll Delay()
+        public virtual InitiativeRoll Delay()
         {
             if (CurrentInitiative == null)
                 throw new InvalidOperationException("skirmish not started, unable to delay");
 
-            return PauseCurrentInitiative(ActionTakenType.Delay);
+            return PauseCurrentInitiative();
         }
 
-        public InitiativeRoll Ready()
+        public virtual InitiativeRoll Resume(InitiativeRoll initiativeToResume)
         {
-            if (CurrentInitiative == null)
-                throw new InvalidOperationException("skirmish not started, unable to delay");
-
-            return PauseCurrentInitiative(ActionTakenType.Ready);
-        }
-
-        public InitiativeRoll Resume(InitiativeRoll initiativeToResume)
-        {
-            initiativeToResume.ActionTaken = ActionTakenType.None;
+            initiativeToResume.Status = InitiativeStatus.Active;
 
             BumpInitiativeBeforeCurrent(initiativeToResume);
 
             CurrentInitiative = initiativeToResume;
-            CurrentInitiative.ActionTaken = ActionTakenType.None;
+            CurrentInitiative.Status = InitiativeStatus.Active;
 
             return initiativeToResume;
         }
 
-        private InitiativeRoll PauseCurrentInitiative(ActionTakenType actionTaken)
+        private InitiativeRoll PauseCurrentInitiative()
         {
-            CurrentInitiative.ActionTaken = actionTaken;
+            CurrentInitiative.Status = InitiativeStatus.Paused;
 
             InitiativeRoll nextInitiative = GetInitiativeOffset();
 
@@ -126,8 +119,8 @@ namespace Combat
             InitiativeRoll nextInitiative = _initiatives.Max();
             foreach (InitiativeRoll initiative in _initiatives)
             {
-                if (initiative.ActionTaken == ActionTakenType.TurnComplete)
-                    initiative.ActionTaken = ActionTakenType.None;
+                if (initiative.Status == InitiativeStatus.Complete)
+                    initiative.Status = InitiativeStatus.Active;
             }
 
             CurrentRound++;
@@ -137,7 +130,7 @@ namespace Combat
         private void End()
         {
             Debug.Assert(CurrentInitiative != null);
-            CurrentInitiative.ActionTaken = ActionTakenType.TurnComplete;
+            CurrentInitiative.Status = InitiativeStatus.Complete;
         }
 
         private InitiativeRoll BeginSkirmish()
