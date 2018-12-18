@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="CombatTests.cs" />
     <Compile Include="InitiativeTrackerTests.cs" />
+    <Compile Include="MockListRoller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +61,10 @@
     <ProjectReference Include="..\Combat\Combat.csproj">
       <Project>{a59295f5-e31a-414f-a6fd-41a8b9970530}</Project>
       <Name>Combat</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\modules\Dice\Dice\Dice.csproj">
+      <Project>{53848598-E521-45F4-A3D5-FBFA812394E2}</Project>
+      <Name>Dice</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

@@ -12,6 +12,7 @@ namespace CombatTimer.Tests
     {
         private List<Character> _characters;
         private List<InitiativeRoll> _initiativeRolls;
+        private List<InitiativeRoll> _initiativeRandomRolls;
 
         [TestInitialize]
         public void TestSetup()
@@ -30,6 +31,15 @@ namespace CombatTimer.Tests
                 , new InitiativeRoll(_characters[1], 14)
                 , new InitiativeRoll(_characters[2], 7)
                 , new InitiativeRoll(_characters[3], 14)
+            };
+
+            MockListRoller mockRandomRoller = new MockListRoller(new int[] { 7, 16, 15, 14 });
+            _initiativeRandomRolls = new List<InitiativeRoll>()
+            {
+                new InitiativeRoll(_characters[0], mockRandomRoller)
+                , new InitiativeRoll(_characters[1], mockRandomRoller)
+                , new InitiativeRoll(_characters[2], mockRandomRoller)
+                , new InitiativeRoll(_characters[3], mockRandomRoller)
             };
         }
 
@@ -110,6 +120,16 @@ namespace CombatTimer.Tests
             List<int> expected = new List<int>() { 1, 1 };
 
             CollectionAssert.AreEqual(expected, wizardTimes);
+        }
+
+        [TestMethod]
+        public void ConstructorValues()
+        {
+            List<int> expected = new List<int>() { 9, 22, 13, 16 };
+
+            List<int> actual = _initiativeRandomRolls.Select(i => i.RolledInitiative).ToList();
+
+            CollectionAssert.AreEqual(expected, actual);
         }
     }
 }
