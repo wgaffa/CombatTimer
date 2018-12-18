@@ -46,7 +46,7 @@ namespace CombatTimer.Tests
         [TestMethod]
         public void OneTurn()
         {
-            Skirmish combat = new Skirmish(_initiativeRolls);
+            EncounterTimer combat = new EncounterTimer(_initiativeRolls);
 
             combat.Next();
             Thread.Sleep(1000);
@@ -58,7 +58,7 @@ namespace CombatTimer.Tests
         [TestMethod]
         public void RoundTwo()
         {
-            Skirmish combat = new Skirmish(_initiativeRolls);
+            EncounterTimer combat = new EncounterTimer(_initiativeRolls);
 
             for (int i = 0; i < 4; i++)
             {
@@ -84,10 +84,10 @@ namespace CombatTimer.Tests
         [TestMethod]
         public void DelayAddingOnCurrentTurn()
         {
-            Skirmish combat = new Skirmish(_initiativeRolls);
+            EncounterTimer combat = new EncounterTimer(_initiativeRolls);
 
             combat.Next(); // Fighter
-            Character rogue = combat.Next(); // Rogue
+            InitiativeRoll rogue = combat.Next(); // Rogue
 
             Thread.Sleep(1000);
             combat.Delay(); // Wiz
@@ -97,17 +97,17 @@ namespace CombatTimer.Tests
             Thread.Sleep(1000);
             combat.End();
 
-            Assert.AreEqual(2, combat.Timers[0].RoundTimes[rogue].Seconds);
+            Assert.AreEqual(2, combat.Timers[0].RoundTimes[rogue.Character].Seconds);
         }
 
         [TestMethod]
         public void DelayUntilNextTurn()
         {
-            Skirmish combat = new Skirmish(_initiativeRolls);
+            EncounterTimer combat = new EncounterTimer(_initiativeRolls);
 
             combat.Next(); // Fighter
             combat.Next(); // Rogue
-            Character wizard = combat.Next();
+            InitiativeRoll wizard = combat.Next();
             Thread.Sleep(1000);
             combat.Delay(); // Enemy
             combat.Next(); // Fighter
@@ -116,7 +116,7 @@ namespace CombatTimer.Tests
             Thread.Sleep(1000);
             combat.End();
 
-            List<int> wizardTimes = combat.Timers.Select(x => x.RoundTimes[wizard].Seconds).ToList();
+            List<int> wizardTimes = combat.Timers.Select(x => x.RoundTimes[wizard.Character].Seconds).ToList();
             List<int> expected = new List<int>() { 1, 1 };
 
             CollectionAssert.AreEqual(expected, wizardTimes);

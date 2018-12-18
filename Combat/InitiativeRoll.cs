@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace Combat
 {
-    public enum ActionTakenType
+    public enum InitiativeStatus
     {
-        None,
-        Delay,
-        Ready,
-        TurnComplete
+        Active,
+        Paused,
+        Complete
     }
 
     public class InitiativeRoll : IEquatable<InitiativeRoll>, IComparable<InitiativeRoll>
@@ -40,7 +39,7 @@ namespace Combat
 
         public Character Character { get; private set; }
         public int RolledInitiative { get; internal set; }
-        public ActionTakenType ActionTaken { get; set; }
+        public InitiativeStatus Status { get; internal set; }
 
         public int CompareTo(InitiativeRoll other)
         {

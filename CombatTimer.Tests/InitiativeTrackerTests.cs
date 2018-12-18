@@ -103,7 +103,7 @@ namespace CombatTimer.Tests
             InitiativeRoll initiative = tracker.Next();
             tracker.Delay();
 
-            Assert.AreEqual(ActionTakenType.Delay, initiative.ActionTaken);
+            Assert.AreEqual(InitiativeStatus.Paused, initiative.Status);
         }
 
         [TestMethod]
@@ -177,7 +177,7 @@ namespace CombatTimer.Tests
 
             InitiativeRoll initiative = tracker.Next();
 
-            Assert.AreEqual(ActionTakenType.None, initiative.ActionTaken);
+            Assert.AreEqual(InitiativeStatus.Active, initiative.Status);
         }
 
         [TestMethod]
@@ -192,9 +192,9 @@ namespace CombatTimer.Tests
             InitiativeTracker tracker = new InitiativeTracker(_initiativeRolls);
 
             InitiativeRoll initiative = tracker.Next();
-            tracker.Ready();
+            tracker.Delay();
 
-            Assert.AreEqual(ActionTakenType.Ready, initiative.ActionTaken);
+            Assert.AreEqual(InitiativeStatus.Paused, initiative.Status);
         }
 
         [TestMethod]
@@ -204,7 +204,7 @@ namespace CombatTimer.Tests
 
             InitiativeRoll delayedAction = tracker.Next();
 
-            tracker.Ready(); // Rogue turn
+            tracker.Delay(); // Rogue turn
             tracker.Next(); // Wizard turn
             tracker.Next(); // Enemy turn
 
@@ -222,7 +222,7 @@ namespace CombatTimer.Tests
 
             InitiativeRoll delayedAction = tracker.Next(); // Rogue delay
 
-            tracker.Ready(); // Wizard
+            tracker.Delay(); // Wizard
             tracker.Next(); // Enemey
             tracker.Next(); // Fighter
 
@@ -239,7 +239,7 @@ namespace CombatTimer.Tests
             tracker.Next(); // Fighter
 
             InitiativeRoll rogueDelay = tracker.Next();
-            tracker.Ready(); // Wizard
+            tracker.Delay(); // Wizard
 
             for (int i = 0; i < 2; i++) // E, Fig
             {
@@ -259,7 +259,7 @@ namespace CombatTimer.Tests
             tracker.Next(); // Fighter
 
             InitiativeRoll rogueDelay = tracker.Next();
-            tracker.Ready(); // Wizard
+            tracker.Delay(); // Wizard
 
             for (int i = 0; i < 2; i++) // E, Fig
             {
@@ -268,7 +268,7 @@ namespace CombatTimer.Tests
 
             InitiativeRoll initiative = tracker.Next();
 
-            Assert.AreEqual(ActionTakenType.None, initiative.ActionTaken);
+            Assert.AreEqual(InitiativeStatus.Active, initiative.Status);
         }
     }
 }
