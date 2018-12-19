@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Character.cs" />
+    <Compile Include="Encounter.cs" />
     <Compile Include="EncounterTimer.cs" />
     <Compile Include="InitiativeRoll.cs" />
     <Compile Include="InitiativeTracker.cs" />
