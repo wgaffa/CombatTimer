@@ -6,10 +6,14 @@ namespace Combat
 {
     public class Encounter
     {
-        private HashSet<Character> _characters;
+        private HashSet<Character> _characters = new HashSet<Character>();
 
         public string Identifier { get; private set; }
-        public IReadOnlyList<Character> Characters => _characters.ToList();
+        public IReadOnlyList<Character> Characters
+        {
+            get => _characters.ToList();
+            private set => _characters = new HashSet<Character>(value);
+        }
         
         public Encounter(string identifier, IEnumerable<Character> characters = null)
         {
@@ -17,7 +21,7 @@ namespace Combat
                 throw new ArgumentException("cannot be null or contain only whitespace", nameof(identifier));
 
             Identifier = identifier;
-            _characters = characters == null ? new HashSet<Character>() : new HashSet<Character>(characters);
+            Characters = characters?.ToList() ?? new List<Character>();
         }
     }
 }
