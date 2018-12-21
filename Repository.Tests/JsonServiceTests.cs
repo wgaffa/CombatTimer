@@ -12,7 +12,7 @@ namespace Repository.Tests
     public class JsonServiceTests
     {
         [TestMethod]
-        public void ReadString()
+        public void Constructor_GivenTextReader()
         {
             string json = GetSimpleJson();
 
@@ -27,7 +27,19 @@ namespace Repository.Tests
         }
 
         [TestMethod]
-        public void GetJson()
+        public void Constructor_GivenString()
+        {
+            string json = GetSimpleJson();
+
+            JsonService jsonService = new JsonService(json);
+
+            string actual = jsonService.EncounterRepository.GetEncounters().SelectMany(e => e.Characters).First().Name;
+
+            Assert.AreEqual("Adam", actual);
+        }
+
+        [TestMethod]
+        public void Save_GivenStringWriter()
         {
             string expected = string.Concat(GetSimpleJson().Where(c => !char.IsWhiteSpace(c)));
 

@@ -28,9 +28,19 @@ namespace Combat.Repositories
                 jsonBuilder.Append(line);
             }
 
-            List<Encounter> encounters = JsonConvert.DeserializeObject<List<Encounter>>(jsonBuilder.ToString(),
-                GetJsonSettings());
-            EncounterRepository = new EncounterRepository(encounters);
+            EncounterRepository = new EncounterRepository(DeserializeEncounters(jsonBuilder.ToString()));
+        }
+
+        public JsonService(string json)
+        {
+            EncounterRepository = new EncounterRepository(DeserializeEncounters(json));
+        }
+
+        private IEnumerable<Encounter> DeserializeEncounters(string json)
+        {
+            List<Encounter> encounters = JsonConvert.DeserializeObject<List<Encounter>>(json,
+                            GetJsonSettings());
+            return encounters;
         }
 
         public JsonService()
