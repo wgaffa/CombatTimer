@@ -82,5 +82,33 @@ namespace Repository.Tests
                 ]
             ";
         }
+
+        [TestMethod]
+        public void Constructor_GivenCollection()
+        {
+            List<Encounter> encounters = CreateEncounters();
+
+            JsonService jsonService = new JsonService(encounters);
+
+            List<string> expected = new List<string>() { "Adam", "Bill" };
+            List<string> actual = jsonService.EncounterRepository.GetEncounters().SelectMany(e => e.Characters).Select(c => c.Name).ToList();
+
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        private static List<Encounter> CreateEncounters()
+        {
+            List<Character> characters = new List<Character>()
+            {
+                new Character("Adam", 2)
+                , new Character("Bill", -2)
+            };
+
+            List<Encounter> encounters = new List<Encounter>()
+            {
+                new Encounter("Epic", characters)
+            };
+            return encounters;
+        }
     }
 }
