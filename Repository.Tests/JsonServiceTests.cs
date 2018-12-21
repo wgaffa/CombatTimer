@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Combat;
 using Combat.Repositories;
@@ -15,7 +16,11 @@ namespace Repository.Tests
         {
             string json = GetSimpleJson();
 
-            JsonService jsonService = JsonService.ReadFromString(json);
+            JsonService jsonService;
+            using (StringReader reader = new StringReader(json))
+            {
+                jsonService = new JsonService(reader);
+            }
 
             string actual = jsonService.EncounterRepository.GetEncounters().SelectMany(e => e.Characters).First().Name;
             Assert.AreEqual("Adam", actual);
@@ -35,7 +40,12 @@ namespace Repository.Tests
                 })
             };
 
-            string actual = new JsonService(encounters).GetJson();
+            string actual;
+            using (StringWriter jsonStream = new StringWriter())
+            {
+                new JsonService(encounters).Save(jsonStream);
+                actual = jsonStream.ToString();
+            }
 
             Assert.AreEqual(expected, actual);
         }

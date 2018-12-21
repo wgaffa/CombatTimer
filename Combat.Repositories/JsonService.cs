@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace Combat.Repositories
 {
@@ -14,36 +16,35 @@ namespace Combat.Repositories
             EncounterRepository = new EncounterRepository(encounters);
         }
 
+        public JsonService(TextReader reader)
+        {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+
+            StringBuilder jsonBuilder = new StringBuilder();
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                jsonBuilder.Append(line);
+            }
+
+            List<Encounter> encounters = JsonConvert.DeserializeObject<List<Encounter>>(jsonBuilder.ToString(),
+                GetJsonSettings());
+            EncounterRepository = new EncounterRepository(encounters);
+        }
+
         public JsonService()
         {
         }
-
-        public string GetJson()
+        
+        public void Save(TextWriter writer)
         {
-            return JsonConvert.SerializeObject(EncounterRepository.GetEncounters()
+            string json = JsonConvert.SerializeObject(EncounterRepository.GetEncounters()
                 , GetJsonSettings());
+            writer.Write(json);
         }
-
-        public void SaveToFile(string path)
-        {
-            using (StreamWriter streamWriter = new StreamWriter(path))
-            using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
-            {
-                new JsonSerializer().Serialize(jsonWriter, EncounterRepository.GetEncounters());
-            }
-        }
-
-        public static JsonService ReadFromString(string jsonString)
-        {
-            JsonSerializerSettings jsonSettings = GetJsonSettings();
-
-            List<Encounter> encounters = JsonConvert.DeserializeObject<List<Encounter>>(jsonString,
-                jsonSettings);
-
-            return new JsonService(encounters);
-        }
-
-        private static JsonSerializerSettings GetJsonSettings()
+        
+        private JsonSerializerSettings GetJsonSettings()
         {
             DefaultContractResolver camelCaseResolver = new DefaultContractResolver()
             {
@@ -56,11 +57,6 @@ namespace Combat.Repositories
                 DefaultValueHandling = DefaultValueHandling.Ignore
             };
             return jsonSettings;
-        }
-
-        public static JsonService ReadFromFile(string path)
-        {
-            return ReadFromString(File.ReadAllText(path));
         }
     }
 }
