@@ -21,6 +21,13 @@ namespace Combat.Repositories
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
 
+            string json = ReadAllLines(reader);
+
+            EncounterRepository = new EncounterRepository(DeserializeEncounters(json));
+        }
+
+        private static string ReadAllLines(TextReader reader)
+        {
             StringBuilder jsonBuilder = new StringBuilder();
             string line;
             while ((line = reader.ReadLine()) != null)
@@ -28,7 +35,7 @@ namespace Combat.Repositories
                 jsonBuilder.Append(line);
             }
 
-            EncounterRepository = new EncounterRepository(DeserializeEncounters(jsonBuilder.ToString()));
+            return jsonBuilder.ToString();
         }
 
         public JsonService(string json)
