@@ -29,7 +29,7 @@ namespace Repository.Tests
         }
 
         [TestMethod]
-        public void Constructor_GivenEncounters_ShouldPopulate()
+        public void Constructor_GivenJson_ShouldPopulate()
         {
             EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
