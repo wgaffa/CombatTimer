@@ -19,12 +19,15 @@ namespace Combat.Repositories
 
         public void Add(Encounter encounter)
         {
+            if (_encounters.Contains(encounter))
+                throw new ArgumentException("encounter allready exists", nameof(encounter));
+
             _encounters.Add(encounter);
         }
 
         public Encounter GetEncounter(string identifier)
         {
-            return _encounters.Where(e => e.Identifier == identifier).FirstOrDefault();
+            return _encounters.Where(e => e.Identifier == identifier).SingleOrDefault();
         }
 
         public IEnumerable<Encounter> GetEncounters()

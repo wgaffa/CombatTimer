@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Combat
 {
-    public class Encounter
+    public class Encounter : IEquatable<Encounter>
     {
         private HashSet<Character> _characters = new HashSet<Character>();
 
@@ -22,6 +22,32 @@ namespace Combat
 
             Identifier = identifier;
             Characters = characters?.ToList() ?? new List<Character>();
+        }
+
+        public bool Equals(Encounter other)
+        {
+            if (other == null) return false;
+
+            return Identifier == other.Identifier;
+        }
+
+        public override string ToString()
+        {
+            return Identifier;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (GetType() != obj.GetType()) return false;
+
+            return Equals(obj as Encounter);
+        }
+
+        public override int GetHashCode()
+        {
+            return Identifier.GetHashCode();
         }
     }
 }
