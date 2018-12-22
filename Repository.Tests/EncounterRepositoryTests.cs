@@ -13,21 +13,25 @@ namespace Repository.Tests
         [TestMethod]
         public void Constructor_GivenIdenticalIdentifier_ShouldIgnore()
         {
-            List<Encounter> encounters = new List<Encounter>()
-            {
-                new Encounter("Epic fight"),
-                new Encounter("Epic fight")
-            };
-
-            EncounterRepository encounterRepository = new EncounterRepository(encounters);
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJsonWithDuplicate());
 
             Assert.AreEqual(1, encounterRepository.GetEncounters().Count());
+        }
+
+        private string GetSimplelJsonWithDuplicate()
+        {
+            return @"[{ ""identifier"":""Epic"",""characters"":[{""name"":""Adam"",""initiative"":2},{""name"":""Bill"",""initiative"":-2}]},{""identifier"":""Epic"",""characters"":[{""name"":""Adam"",""initiative"":2},{""name"":""Bill"",""initiative"":-2}]}]";
+        }
+
+        private string GetSimplelJson()
+        {
+            return @"[{""identifier"":""Epic"",""characters"":[{""name"":""Adam"",""initiative"":2},{""name"":""Bill"",""initiative"":-2},{""name"":""Orc""},{""name"":""Orc chieftain""}]},{""identifier"":""Random"",""characters"":[{""name"":""Adam"",""initiative"":2},{""name"":""Bill"",""initiative"":-2},{""name"":""Goblin Boar Rider""}]},{""identifier"":""Skill encounter"",""characters"":[{""name"":""Adam"",""initiative"":2},{""name"":""Bill"",""initiative"":-2},{""name"":""Simple Thief""}]}]";
         }
 
         [TestMethod]
         public void Constructor_GivenEncounters_ShouldPopulate()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(CreateEncounters());
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
             List<Encounter> expected = CreateEncounters().OrderBy(e => e.Identifier).ToList();
 
@@ -41,7 +45,7 @@ namespace Repository.Tests
         public void Add_GivenNoDuplicate_ShouldPopuplate()
         {
             Encounter newEncounter = new Encounter("New encounter");
-            EncounterRepository encounterRepository = new EncounterRepository(CreateEncounters());
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
             encounterRepository.Add(newEncounter);
 
@@ -52,7 +56,7 @@ namespace Repository.Tests
         public void Add_GivenDuplicate_ShouldThrow()
         {
             Encounter addEncounter = new Encounter("Random");
-            EncounterRepository encounterRepository = new EncounterRepository(CreateEncounters());
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
             Assert.ThrowsException<ArgumentException>(() => encounterRepository.Add(addEncounter));
         }
@@ -60,7 +64,7 @@ namespace Repository.Tests
         [TestMethod]
         public void GetEncounter_GivenExistingIdentifier_ShouldReturnEncounter()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(CreateEncounters());
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
             Encounter expected = new Encounter("Random");
             Encounter actual = encounterRepository.GetEncounter("Random");
@@ -71,7 +75,7 @@ namespace Repository.Tests
         [TestMethod]
         public void GetEncounter_GivenNonExistingIdentifier_ShouldReturnNull()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(CreateEncounters());
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
             Encounter encounter = encounterRepository.GetEncounter("Fake id");
 
@@ -81,7 +85,7 @@ namespace Repository.Tests
         [TestMethod]
         public void GetEncounters_ShouldReturnCollection()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(CreateEncounters());
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
             Assert.AreEqual(3, encounterRepository.GetEncounters().Count());
         }
@@ -89,7 +93,7 @@ namespace Repository.Tests
         [TestMethod]
         public void GetEncounters_GivenPredicate_ShouldReturnCollection()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(CreateEncounters());
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
             List<Encounter> encounters = encounterRepository.GetEncounters(e => e.Characters.Any(c => c.Name.Contains("Orc"))).ToList();
 
@@ -104,7 +108,7 @@ namespace Repository.Tests
         [TestMethod]
         public void Remove_GivenIdentifier()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(CreateEncounters());
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
             encounterRepository.Remove(new Encounter("Skill encounter"));
 
@@ -114,7 +118,7 @@ namespace Repository.Tests
         [TestMethod]
         public void Remove_GivenNonExistingIdentifier_ShouldIgnore()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(CreateEncounters());
+            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
 
             encounterRepository.Remove(new Encounter("Non existing"));
 
@@ -127,7 +131,7 @@ namespace Repository.Tests
             {
                 new Character("Adam"),
                 new Character("Bill"),
-                new Character("Orc grunt"),
+                new Character("Orc"),
                 new Character("Orc chieftain")
             };
 
@@ -135,7 +139,7 @@ namespace Repository.Tests
             {
                 new Character("Adam"),
                 new Character("Bill"),
-                new Character("Goblin boar rider")
+                new Character("Goblin Boar Rider")
             };
 
             List<Character> skillCharacters = new List<Character>()
