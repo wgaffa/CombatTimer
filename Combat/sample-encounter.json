@@ -1,0 +1,53 @@
+﻿[
+  {
+    "identifier": "Epic",
+    "characters": [
+      {
+        "name": "Adam",
+        "initiative": 2
+      },
+      {
+        "name": "Bill",
+        "initiative": -2
+      },
+      {
+        "name": "Orc"
+      },
+      {
+        "name": "Orc chieftain"
+      }
+    ]
+  },
+  {
+    "identifier": "Random",
+    "characters": [
+      {
+        "name": "Adam",
+        "initiative": 2
+      },
+      {
+        "name": "Bill",
+        "initiative": -2
+      },
+      {
+        "name": "Goblin Boar Rider"
+      }
+    ]
+  },
+  {
+    "identifier": "Skill encounter",
+    "characters": [
+      {
+        "name": "Adam",
+        "initiative": 2
+      },
+      {
+        "name": "Bill",
+        "initiative": -2
+      },
+      {
+        "name": "Simple Thief"
+      }
+    ]
+  }
+]

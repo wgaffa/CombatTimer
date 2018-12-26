@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EncounterViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -93,6 +94,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Combat.Repositories\Combat.Repositories.csproj">
+      <Project>{BC57F521-CFB2-48FD-BB18-C0A4D3123806}</Project>
+      <Name>Combat.Repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Combat\Combat.csproj">
+      <Project>{A59295F5-E31A-414F-A6FD-41A8B9970530}</Project>
+      <Name>Combat</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\modules\Dice\Dice\Dice.csproj">
+      <Project>{53848598-E521-45F4-A3D5-FBFA812394E2}</Project>
+      <Name>Dice</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

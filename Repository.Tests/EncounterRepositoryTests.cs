@@ -13,7 +13,7 @@ namespace Repository.Tests
         [TestMethod]
         public void Constructor_GivenIdenticalIdentifier_ShouldIgnore()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJsonWithDuplicate());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJsonWithDuplicate());
 
             Assert.AreEqual(1, encounterRepository.GetEncounters().Count());
         }
@@ -31,7 +31,7 @@ namespace Repository.Tests
         [TestMethod]
         public void Constructor_GivenJson_ShouldPopulate()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJson());
 
             List<Encounter> expected = CreateEncounters().OrderBy(e => e.Identifier).ToList();
 
@@ -45,7 +45,7 @@ namespace Repository.Tests
         public void Add_GivenNoDuplicate_ShouldPopuplate()
         {
             Encounter newEncounter = new Encounter("New encounter");
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJson());
 
             encounterRepository.Add(newEncounter);
 
@@ -56,7 +56,7 @@ namespace Repository.Tests
         public void Add_GivenDuplicate_ShouldThrow()
         {
             Encounter addEncounter = new Encounter("Random");
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJson());
 
             Assert.ThrowsException<ArgumentException>(() => encounterRepository.Add(addEncounter));
         }
@@ -64,7 +64,7 @@ namespace Repository.Tests
         [TestMethod]
         public void GetEncounter_GivenExistingIdentifier_ShouldReturnEncounter()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJson());
 
             Encounter expected = new Encounter("Random");
             Encounter actual = encounterRepository.GetEncounter("Random");
@@ -75,7 +75,7 @@ namespace Repository.Tests
         [TestMethod]
         public void GetEncounter_GivenNonExistingIdentifier_ShouldReturnNull()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJson());
 
             Encounter encounter = encounterRepository.GetEncounter("Fake id");
 
@@ -85,7 +85,7 @@ namespace Repository.Tests
         [TestMethod]
         public void GetEncounters_ShouldReturnCollection()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJson());
 
             Assert.AreEqual(3, encounterRepository.GetEncounters().Count());
         }
@@ -93,7 +93,7 @@ namespace Repository.Tests
         [TestMethod]
         public void GetEncounters_GivenPredicate_ShouldReturnCollection()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJson());
 
             List<Encounter> encounters = encounterRepository.GetEncounters(e => e.Characters.Any(c => c.Name.Contains("Orc"))).ToList();
 
@@ -108,7 +108,7 @@ namespace Repository.Tests
         [TestMethod]
         public void Remove_GivenIdentifier()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJson());
 
             encounterRepository.Remove(new Encounter("Skill encounter"));
 
@@ -118,7 +118,7 @@ namespace Repository.Tests
         [TestMethod]
         public void Remove_GivenNonExistingIdentifier_ShouldIgnore()
         {
-            EncounterRepository encounterRepository = new EncounterRepository(GetSimplelJson());
+            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(GetSimplelJson());
 
             encounterRepository.Remove(new Encounter("Non existing"));
 

@@ -28,6 +28,7 @@ namespace Combat
                 throw new ArgumentException("atleast two combatants required", nameof(initiatives));
 
             _initiatives = initiatives.ToList();
+            SortInitiatives();
         }
 
         public IReadOnlyList<InitiativeRoll> Initiatives => _initiatives.AsReadOnly();
