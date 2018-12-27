@@ -38,8 +38,8 @@ namespace Combat
         }
 
         public Character Character { get; private set; }
-        public int RolledInitiative { get; internal set; }
-        public InitiativeStatus Status { get; internal set; }
+        public int RolledInitiative { get; set; }
+        public InitiativeStatus Status { get; set; }
 
         public int CompareTo(InitiativeRoll other)
         {

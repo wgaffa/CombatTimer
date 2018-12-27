@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:CombatTimer.UI.Properties"
         xmlns:local="clr-namespace:CombatTimer.UI"
         mc:Ignorable="d"
         Title="Initiative Tracker" Height="450" Width="800" WindowStartupLocation="CenterScreen">
@@ -21,7 +22,16 @@
         <Button Content="New Combat" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
         
         <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding EncounterTimer.CurrentRound, StringFormat=Round: {0}}" VerticalAlignment="Top"/>
-
+        <StackPanel Grid.Row="1" DataContext="{Binding EncounterTimer.CurrentInitiative}">
+            <StackPanel.Background>
+                <ImageBrush ImageSource="pack://application:,,,/Resources/Default_Profile_Picture.png" Stretch="UniformToFill" />
+            </StackPanel.Background>
+            <TextBlock Text="{Binding Character.Name, StringFormat=Name: {0}}" />
+            <TextBlock Text="{Binding RolledInitiative, StringFormat=Initiative: {0}}" />
+            <TextBlock Text="{Binding Status}" />
+            <Button Content="Turn Complete" />
+            <Button Content="Ready/Delay" />
+        </StackPanel>
         <ItemsControl Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding EncounterTimer.Initiatives}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -30,15 +40,17 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Padding="5" Background="#FF8C9CFF" Width="150" Height="100">
+                    <Border Padding="5" Width="100">
+                        <Border.Background>
+                            <ImageBrush ImageSource="Resources/Default_Profile_Picture.png" Stretch="Uniform"/>
+                        </Border.Background>
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Width="Auto">
                             <TextBlock Text="{Binding Character.Name}" />
-                            <TextBlock Text="{Binding RolledInitiative}" />
+                            <TextBox Text="{Binding RolledInitiative}" />
                         </StackPanel>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-
     </Grid>
 </Window>
