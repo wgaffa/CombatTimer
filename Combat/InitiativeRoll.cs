@@ -54,14 +54,17 @@ namespace Combat
 
         public override bool Equals(object obj)
         {
+            if (obj == null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (GetType() != obj.GetType()) return false;
+
             return Equals(obj as InitiativeRoll);
         }
 
         public bool Equals(InitiativeRoll other)
         {
             return other != null &&
-                   EqualityComparer<Character>.Default.Equals(Character, other.Character) &&
-                   RolledInitiative == other.RolledInitiative;
+                   EqualityComparer<Character>.Default.Equals(Character, other.Character);
         }
 
         public override int GetHashCode()
@@ -70,7 +73,6 @@ namespace Combat
             {
                 var hashCode = 13;
                 hashCode = hashCode * 23 + Character.GetHashCode();
-                hashCode = hashCode * 23 + RolledInitiative;
                 return hashCode;
             }
             
