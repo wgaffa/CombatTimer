@@ -23,6 +23,7 @@ namespace CombatTimer.UI
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new EncounterViewModel();
         }
     }
 }

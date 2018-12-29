@@ -9,11 +9,11 @@ using System.Text;
 
 namespace Combat.Repositories
 {
-    public class EncounterRepository
+    public class JsonEncounterRepository
     {
         private HashSet<Encounter> _encounters = new HashSet<Encounter>();
         
-        public EncounterRepository(string json)
+        public JsonEncounterRepository(string json)
         {
             if (string.IsNullOrWhiteSpace(json))
                 throw new ArgumentException("cannot be null or contain only whitespace", nameof(json));
@@ -21,7 +21,7 @@ namespace Combat.Repositories
             _encounters = new HashSet<Encounter>(DeserializeEncounters(json));
         }
 
-        public EncounterRepository(FileInfo fileInfo)
+        public JsonEncounterRepository(FileInfo fileInfo)
         {
             if (fileInfo == null)
                 throw new ArgumentNullException(nameof(fileInfo));

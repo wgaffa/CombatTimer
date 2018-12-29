@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -7,13 +8,17 @@ using System.Threading.Tasks;
 
 namespace Combat
 {
-    public class InitiativeTracker
+    public class InitiativeTracker : INotifyPropertyChanged
     {
         public int CurrentRound { get; private set; } = 1;
 
         public InitiativeRoll CurrentInitiative { get; private set; }
 
         private List<InitiativeRoll> _initiatives;
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
 
         /// <summary>
         /// Initialize a new instance of the <see cref="InitiativeTracker"/> class.
@@ -28,6 +33,17 @@ namespace Combat
                 throw new ArgumentException("atleast two combatants required", nameof(initiatives));
 
             _initiatives = initiatives.ToList();
+            SortInitiatives();
+
+            foreach (InitiativeRoll initiative in _initiatives)
+            {
+                initiative.PropertyChanged += Initiative_PropertyChanged;
+            }
+        }
+
+        private void Initiative_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "RolledInitiative") SortInitiatives();
         }
 
         public IReadOnlyList<InitiativeRoll> Initiatives => _initiatives.AsReadOnly();
@@ -112,6 +128,8 @@ namespace Combat
                 .OrderByDescending(x => x.RolledInitiative)
                 .ThenByDescending(x => x.Character.Initiative)
                 .ToList();
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Initiatives)));
         }
 
         private InitiativeRoll BeginNewRound()

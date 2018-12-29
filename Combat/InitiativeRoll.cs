@@ -2,6 +2,7 @@
 using DMTools.Die.Rollers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +16,14 @@ namespace Combat
         Complete
     }
 
-    public class InitiativeRoll : IEquatable<InitiativeRoll>, IComparable<InitiativeRoll>
+    public class InitiativeRoll : IEquatable<InitiativeRoll>, IComparable<InitiativeRoll>, INotifyPropertyChanged
     {
+        private int _rolledInitiative;
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
+
         public InitiativeRoll(Character character, int rolledInitiative)
         {
             Character = character ?? throw new ArgumentNullException(nameof(character));
@@ -38,8 +45,16 @@ namespace Combat
         }
 
         public Character Character { get; private set; }
-        public int RolledInitiative { get; internal set; }
-        public InitiativeStatus Status { get; internal set; }
+        public int RolledInitiative {
+            get => _rolledInitiative;
+            set
+            {
+                if (_rolledInitiative == value) return;
+                _rolledInitiative = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RolledInitiative)));
+            }
+        }
+        public InitiativeStatus Status { get; set; }
 
         public int CompareTo(InitiativeRoll other)
         {
@@ -54,14 +69,17 @@ namespace Combat
 
         public override bool Equals(object obj)
         {
+            if (obj == null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (GetType() != obj.GetType()) return false;
+
             return Equals(obj as InitiativeRoll);
         }
 
         public bool Equals(InitiativeRoll other)
         {
             return other != null &&
-                   EqualityComparer<Character>.Default.Equals(Character, other.Character) &&
-                   RolledInitiative == other.RolledInitiative;
+                   EqualityComparer<Character>.Default.Equals(Character, other.Character);
         }
 
         public override int GetHashCode()
@@ -70,10 +88,9 @@ namespace Combat
             {
                 var hashCode = 13;
                 hashCode = hashCode * 23 + Character.GetHashCode();
-                hashCode = hashCode * 23 + RolledInitiative;
                 return hashCode;
             }
-            
+
         }
     }
 }

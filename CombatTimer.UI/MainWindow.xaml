@@ -3,46 +3,62 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:CombatTimer.UI.Properties"
         xmlns:local="clr-namespace:CombatTimer.UI"
+        xmlns:localConverters="clr-namespace:CombatTimer.UI.Converters"
         mc:Ignorable="d"
-        Title="Initiative Tracker" Height="450" Width="800">
+        Title="Initiative Tracker" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <Style x:Key="InitiativeList" TargetType="ItemsControl">
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="0" />
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
-              <Setter Property="ItemContainerStyle">
-                <Setter.Value>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Padding" Value="5" />
-                    </Style>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <localConverters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="2*"/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button Content="New Combat" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="10,10,0,0" TextWrapping="Wrap" Text="Round: " VerticalAlignment="Top"/>
+        <Button Content="_New Combat" HorizontalAlignment="Left"
+                Margin="10,10,0,0" VerticalAlignment="Top"
+                Command="{Binding NewCombatCommand}"/>
+        <Button Content="Begin Combat" HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding BeginCombatCommand}"/>
 
-        <ItemsControl Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource InitiativeList}">
-            <TextBlock Text="Initiative #1" />
-            <TextBlock Text="Initiative #2" />
-            <TextBlock Text="Initiative #3" />
-            <TextBlock Text="Initiative #4" />
+        <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding EncounterTimer.CurrentRound, StringFormat=Round: {0}}" VerticalAlignment="Top"/>
+        <StackPanel Grid.Row="1" DataContext="{Binding EncounterTimer.CurrentInitiative}"
+                    Visibility="{Binding Converter={StaticResource NullToVisibilityConverter}}">
+            <StackPanel.Background>
+                <ImageBrush ImageSource="pack://application:,,,/Resources/Default_Profile_Picture.png" Stretch="UniformToFill" />
+            </StackPanel.Background>
+            <TextBlock Text="{Binding Character.Name, StringFormat=Name: {0}}" />
+            <TextBlock Text="{Binding RolledInitiative, StringFormat=Initiative: {0}}" />
+            <TextBlock Text="{Binding Status}" />
+            <Button Content="Turn _Complete"
+                    Command="{Binding DataContext.TurnCompleteCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+            <Button Content="_Ready/Delay"
+                    Command="{Binding DataContext.DelayCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
+        </StackPanel>
+        <ItemsControl Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding EncounterTimer.Initiatives}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="5" Width="100">
+                        <Border.Background>
+                            <ImageBrush ImageSource="Resources/Default_Profile_Picture.png" Stretch="Uniform"/>
+                        </Border.Background>
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Width="Auto">
+                            <TextBlock Text="{Binding Character.Name}" />
+                            <TextBox Text="{Binding RolledInitiative}" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
         </ItemsControl>
-
     </Grid>
 </Window>

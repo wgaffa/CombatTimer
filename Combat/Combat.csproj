@@ -56,5 +56,10 @@
       <Name>Dice</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="sample-encounter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
