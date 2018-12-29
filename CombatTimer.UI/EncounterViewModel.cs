@@ -26,7 +26,7 @@ namespace CombatTimer.UI
             }
 
             EncounterTimer = new EncounterTimer(initiativeRolls);
-            EncounterTimer.Next();
+            //EncounterTimer.Next();
         }
     }
 }

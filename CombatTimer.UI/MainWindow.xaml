@@ -19,7 +19,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button Content="New Combat" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Content="_New Combat" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
         
         <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding EncounterTimer.CurrentRound, StringFormat=Round: {0}}" VerticalAlignment="Top"/>
         <StackPanel Grid.Row="1" DataContext="{Binding EncounterTimer.CurrentInitiative}">
@@ -29,8 +29,8 @@
             <TextBlock Text="{Binding Character.Name, StringFormat=Name: {0}}" />
             <TextBlock Text="{Binding RolledInitiative, StringFormat=Initiative: {0}}" />
             <TextBlock Text="{Binding Status}" />
-            <Button Content="Turn Complete" />
-            <Button Content="Ready/Delay" />
+            <Button Content="Turn _Complete" />
+            <Button Content="_Ready/Delay" />
         </StackPanel>
         <ItemsControl Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding EncounterTimer.Initiatives}">
             <ItemsControl.ItemsPanel>
