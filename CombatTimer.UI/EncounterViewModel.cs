@@ -1,11 +1,7 @@
 ﻿using Combat;
 using Combat.Repositories;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CombatTimer.UI
 {
@@ -26,7 +22,6 @@ namespace CombatTimer.UI
             }
 
             EncounterTimer = new EncounterTimer(initiativeRolls);
-            //EncounterTimer.Next();
         }
     }
 }

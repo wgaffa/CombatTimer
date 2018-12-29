@@ -5,9 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:properties="clr-namespace:CombatTimer.UI.Properties"
         xmlns:local="clr-namespace:CombatTimer.UI"
+        xmlns:localConverters="clr-namespace:CombatTimer.UI.Converters"
         mc:Ignorable="d"
         Title="Initiative Tracker" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Window.Resources>
+        <localConverters:NullToVisibilityConverter x:Key="NullToBooleanConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -22,7 +24,8 @@
         <Button Content="_New Combat" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
         
         <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding EncounterTimer.CurrentRound, StringFormat=Round: {0}}" VerticalAlignment="Top"/>
-        <StackPanel Grid.Row="1" DataContext="{Binding EncounterTimer.CurrentInitiative}">
+        <StackPanel Grid.Row="1" DataContext="{Binding EncounterTimer.CurrentInitiative}"
+                    Visibility="{Binding Converter={StaticResource NullToBooleanConverter}}">
             <StackPanel.Background>
                 <ImageBrush ImageSource="pack://application:,,,/Resources/Default_Profile_Picture.png" Stretch="UniformToFill" />
             </StackPanel.Background>
