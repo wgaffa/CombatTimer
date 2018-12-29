@@ -2,6 +2,7 @@
 using DMTools.Die.Rollers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +16,14 @@ namespace Combat
         Complete
     }
 
-    public class InitiativeRoll : IEquatable<InitiativeRoll>, IComparable<InitiativeRoll>
+    public class InitiativeRoll : IEquatable<InitiativeRoll>, IComparable<InitiativeRoll>, INotifyPropertyChanged
     {
+        private int _rolledInitiative;
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
+
         public InitiativeRoll(Character character, int rolledInitiative)
         {
             Character = character ?? throw new ArgumentNullException(nameof(character));
@@ -38,7 +45,15 @@ namespace Combat
         }
 
         public Character Character { get; private set; }
-        public int RolledInitiative { get; set; }
+        public int RolledInitiative {
+            get => _rolledInitiative;
+            set
+            {
+                if (_rolledInitiative == value) return;
+                _rolledInitiative = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RolledInitiative)));
+            }
+        }
         public InitiativeStatus Status { get; set; }
 
         public int CompareTo(InitiativeRoll other)
@@ -75,7 +90,7 @@ namespace Combat
                 hashCode = hashCode * 23 + Character.GetHashCode();
                 return hashCode;
             }
-            
+
         }
     }
 }

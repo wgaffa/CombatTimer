@@ -22,6 +22,7 @@ namespace CombatTimer.UI
             NewCombatCommand = new DelegateCommand(OnNewCombatCommand);
             TurnCompleteCommand = new DelegateCommand(OnTurnCompleteCommand);
             DelayCommand = new DelegateCommand(OnDelayCommand);
+            BeginCombatCommand = new DelegateCommand(OnTurnCompleteCommand, CanBeginCombat);
         }
 
         private EncounterTimer CreateNewCombat()
@@ -39,12 +40,13 @@ namespace CombatTimer.UI
         public DelegateCommand NewCombatCommand { get; private set; }
         public DelegateCommand TurnCompleteCommand { get; private set; }
         public DelegateCommand DelayCommand { get; private set; }
+        public DelegateCommand BeginCombatCommand { get; private set; }
 
         private void OnNewCombatCommand(object obj)
         {
             EncounterTimer = CreateNewCombat();
-            EncounterTimer.Next();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EncounterTimer)));
+            BeginCombatCommand.InvokeCanExecuteChanged();
         }
 
         private void OnDelayCommand(object obj)
@@ -57,8 +59,13 @@ namespace CombatTimer.UI
         {
             EncounterTimer.Next();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EncounterTimer)));
+            BeginCombatCommand.InvokeCanExecuteChanged();
         }
 
+        private bool CanBeginCombat(object obj)
+        {
+            return EncounterTimer.CurrentInitiative == null;
+        }
         #endregion
 
         #region INotifyPropertyChanged

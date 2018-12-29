@@ -22,9 +22,10 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Button Content="_New Combat" HorizontalAlignment="Left"
-                Margin="10,10,0,0" VerticalAlignment="Top" Width="75"
+                Margin="10,10,0,0" VerticalAlignment="Top"
                 Command="{Binding NewCombatCommand}"/>
-        
+        <Button Content="Begin Combat" HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding BeginCombatCommand}"/>
+
         <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding EncounterTimer.CurrentRound, StringFormat=Round: {0}}" VerticalAlignment="Top"/>
         <StackPanel Grid.Row="1" DataContext="{Binding EncounterTimer.CurrentInitiative}"
                     Visibility="{Binding Converter={StaticResource NullToVisibilityConverter}}">
