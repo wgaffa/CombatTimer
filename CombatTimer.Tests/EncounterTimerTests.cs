@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Timers;
 using Combat;
+using Combat.Timers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace CombatTimer.Tests
 {
@@ -46,10 +49,12 @@ namespace CombatTimer.Tests
         [TestMethod]
         public void OneTurn()
         {
-            EncounterTimer combat = new EncounterTimer(_initiativeRolls);
+            Mock<ITimer> mockTimer = new Mock<ITimer>();
+            mockTimer.Setup(t => t.Stop()).Returns(TimeSpan.FromSeconds(1));
+
+            EncounterTimer combat = new EncounterTimer(_initiativeRolls) { Timer = mockTimer.Object };
 
             combat.Next();
-            Thread.Sleep(1000);
             combat.Next();
 
             Assert.AreEqual(1, combat.Timers[0].RoundTimes[_characters[0]].Seconds);
@@ -58,24 +63,26 @@ namespace CombatTimer.Tests
         [TestMethod]
         public void RoundTwo()
         {
+            Mock<ITimer> mockTimer = new Mock<ITimer>();
+            mockTimer.SetupSequence(t => t.Stop())
+                .Returns(TimeSpan.FromSeconds(1))
+                .Returns(TimeSpan.FromSeconds(2))
+                .Returns(TimeSpan.FromSeconds(3))
+                .Returns(TimeSpan.FromSeconds(4));
             EncounterTimer combat = new EncounterTimer(_initiativeRolls);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i <= 4; i++)
             {
                 combat.Next();
             }
 
-            int threshold = 1;
-            for (int i = 0; i < 4; i++)
+            combat.Timer = mockTimer.Object;
+            for (int i = 0; i <= 4; i++)
             {
                 combat.Next();
-                int quickThinkers = threshold < i ? -1 : 1;
-                Thread.Sleep((i + quickThinkers) * 1000);
             }
 
-            combat.Next();
-
-            List<int> expected = new List<int>() { 1, 1, 2, 2 };
+            List<int> expected = new List<int>() { 1, 2, 3, 4 };
             List<int> actual = combat.Timers[1].RoundTimes.Select(x => x.Value.Seconds).OrderBy(x => x).ToList();
 
             CollectionAssert.AreEqual(expected, actual);
@@ -84,17 +91,17 @@ namespace CombatTimer.Tests
         [TestMethod]
         public void DelayAddingOnCurrentTurn()
         {
-            EncounterTimer combat = new EncounterTimer(_initiativeRolls);
+            Mock<ITimer> mockTimer = new Mock<ITimer>();
+            mockTimer.Setup(t => t.Stop()).Returns(TimeSpan.FromSeconds(1));
+            EncounterTimer combat = new EncounterTimer(_initiativeRolls) { Timer = mockTimer.Object };
 
             combat.Next(); // Fighter
             InitiativeRoll rogue = combat.Next(); // Rogue
 
-            Thread.Sleep(1000);
             combat.Delay(); // Wiz
             combat.Next(); // Enemy
 
             combat.Resume(rogue);
-            Thread.Sleep(1000);
             combat.End();
 
             Assert.AreEqual(2, combat.Timers[0].RoundTimes[rogue.Character].Seconds);
@@ -103,17 +110,17 @@ namespace CombatTimer.Tests
         [TestMethod]
         public void DelayUntilNextTurn()
         {
-            EncounterTimer combat = new EncounterTimer(_initiativeRolls);
+            Mock<ITimer> mockTimer = new Mock<ITimer>();
+            mockTimer.Setup(t => t.Stop()).Returns(TimeSpan.FromSeconds(1));
+            EncounterTimer combat = new EncounterTimer(_initiativeRolls) { Timer = mockTimer.Object };
 
             combat.Next(); // Fighter
             combat.Next(); // Rogue
             InitiativeRoll wizard = combat.Next();
-            Thread.Sleep(1000);
             combat.Delay(); // Enemy
             combat.Next(); // Fighter
 
             combat.Resume(wizard); // Wizard
-            Thread.Sleep(1000);
             combat.End();
 
             List<int> wizardTimes = combat.Timers.Select(x => x.RoundTimes[wizard.Character].Seconds).ToList();

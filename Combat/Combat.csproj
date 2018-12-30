@@ -49,6 +49,8 @@
     <Compile Include="InitiativeTracker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoundTimer.cs" />
+    <Compile Include="Timers\DateTimeTimer.cs" />
+    <Compile Include="Timers\ITimer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\modules\Dice\Dice\Dice.csproj">

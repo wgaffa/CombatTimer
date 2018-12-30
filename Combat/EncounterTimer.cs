@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Combat.Timers;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Combat
 {
@@ -11,6 +9,20 @@ namespace Combat
     {
         private DateTime _currentTurnStarted;
         private List<RoundTimer> _roundTimers = new List<RoundTimer>();
+        private ITimer _timer;
+
+        public ITimer Timer
+        {
+            get
+            {
+                if (_timer == null)
+                    _timer = new DateTimeTimer();
+
+                return _timer;
+            }
+            set
+            { _timer = value; }
+        }
 
         public EncounterTimer(IEnumerable<InitiativeRoll> initiatives)
             : base(initiatives)
@@ -26,7 +38,7 @@ namespace Combat
         public override InitiativeRoll Next()
         {
             End();
-            _currentTurnStarted = DateTime.Now;
+            Timer.Start();
             return base.Next();
         }
 
@@ -37,13 +49,13 @@ namespace Combat
         public override InitiativeRoll Delay()
         {
             End();
-            _currentTurnStarted = DateTime.Now;
+            Timer.Start();
             return base.Delay();
         }
 
         public override InitiativeRoll Resume(InitiativeRoll initiativeToResume)
         {
-            _currentTurnStarted = DateTime.Now;
+            Timer.Start();
             return base.Resume(initiativeToResume);
         }
 
@@ -56,7 +68,7 @@ namespace Combat
             if (firstRoundNotStarted)
                 return;
 
-            TimeSpan turnTime = DateTime.Now - _currentTurnStarted;
+            TimeSpan turnTime = Timer.Stop();
 
             RoundTimer timer = _roundTimers.ElementAtOrDefault(CurrentRound - 1);
             if (timer == null)
