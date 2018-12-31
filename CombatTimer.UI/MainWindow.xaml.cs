@@ -104,5 +104,24 @@ namespace CombatTimer.UI
         {
             Application.Current.Shutdown();
         }
+
+        public void OnInitiative_KeyDownCommand(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) return;
+
+            UpdateBindingSource(sender as UIElement);
+            e.Handled = true;
+        }
+
+        private void UpdateBindingSource(UIElement element)
+        {
+            if (element == null) return;
+
+            if (!(element is TextBox textBox)) return;
+
+            BindingExpression bindingExpression = textBox.GetBindingExpression(TextBox.TextProperty);
+
+            bindingExpression?.UpdateSource();
+        }
     }
 }

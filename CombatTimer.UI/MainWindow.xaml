@@ -81,7 +81,7 @@
                         </Border.Background>
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Width="Auto">
                             <TextBlock Text="{Binding Character.Name}" />
-                            <TextBox Text="{Binding RolledInitiative}" />
+                            <TextBox Text="{Binding RolledInitiative}" KeyDown="OnInitiative_KeyDownCommand" />
                         </StackPanel>
                     </Border>
                 </DataTemplate>
