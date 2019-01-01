@@ -24,6 +24,7 @@ namespace CombatTimer.UI
     public partial class MainWindow : Window
     {
         private EncounterDetailsWindow _encounterWindow;
+        private Point _mouseMoveStartPoint;
 
         public static RoutedCommand EncounterDetails = new RoutedCommand();
 
@@ -104,24 +105,47 @@ namespace CombatTimer.UI
         {
             Application.Current.Shutdown();
         }
-
-        public void OnInitiative_KeyDownCommand(object sender, KeyEventArgs e)
+        
+        private void ItemsControl_PreviewMouseLeftDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.Key != Key.Enter) return;
-
-            UpdateBindingSource(sender as UIElement);
-            e.Handled = true;
+            _mouseMoveStartPoint = e.GetPosition(null);
         }
 
-        private void UpdateBindingSource(UIElement element)
+        private void ItemsControl_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (element == null) return;
+            if (e.OriginalSource is TextBox) return;
+            if (e.OriginalSource.GetType().FullName == "System.Windows.Controls.TextBoxView") return;
 
-            if (!(element is TextBox textBox)) return;
+            Point currentMousePosition = e.GetPosition(null);
+            Vector moveDiff = currentMousePosition - _mouseMoveStartPoint;
 
-            BindingExpression bindingExpression = textBox.GetBindingExpression(TextBox.TextProperty);
+            if (e.LeftButton == MouseButtonState.Pressed &&
+                (
+                Math.Abs(moveDiff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                Math.Abs(moveDiff.Y) > SystemParameters.MinimumVerticalDragDistance
+                ))
+            {
+                ItemsControl initiativeList = sender as ItemsControl;
+                ContentPresenter initiativePresenter = FindAncestor<ContentPresenter>((DependencyObject)e.OriginalSource);
 
-            bindingExpression?.UpdateSource();
+                InitiativeRoll initiativeRoll = (InitiativeRoll)initiativeList.ItemContainerGenerator.ItemFromContainer(initiativePresenter);
+                DataObject dragData = new DataObject("initiativeRoll", initiativeRoll);
+
+                DragDrop.DoDragDrop(initiativePresenter, dragData, DragDropEffects.Move);
+            }
+        }
+
+        private T FindAncestor<T>(DependencyObject current) where T : DependencyObject
+        {
+            do
+            {
+                if (ReferenceEquals(typeof(T), current.GetType()))
+                    return (T)current;
+
+                current = VisualTreeHelper.GetParent(current);
+            } while (current != null);
+
+            return null;
         }
     }
 }
