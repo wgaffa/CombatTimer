@@ -116,14 +116,7 @@ namespace CombatTimer.UI
             if (e.OriginalSource is TextBox) return;
             if (e.OriginalSource.GetType().FullName == "System.Windows.Controls.TextBoxView") return;
 
-            Point currentMousePosition = e.GetPosition(null);
-            Vector moveDiff = currentMousePosition - _mouseMoveStartPoint;
-
-            if (e.LeftButton == MouseButtonState.Pressed &&
-                (
-                Math.Abs(moveDiff.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                Math.Abs(moveDiff.Y) > SystemParameters.MinimumVerticalDragDistance
-                ))
+            if (e.LeftButton == MouseButtonState.Pressed && HasMouseMovedMinimumDistance(_mouseMoveStartPoint, e.GetPosition(null)))
             {
                 ItemsControl initiativeList = sender as ItemsControl;
                 ContentPresenter initiativePresenter = FindAncestor<ContentPresenter>((DependencyObject)e.OriginalSource);
@@ -133,6 +126,15 @@ namespace CombatTimer.UI
 
                 DragDrop.DoDragDrop(initiativePresenter, dragData, DragDropEffects.Move);
             }
+        }
+
+        private bool HasMouseMovedMinimumDistance(Point point1, Point point2)
+        {
+            Vector moveDiff = point1 - point2;
+
+            return
+                Math.Abs(moveDiff.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                Math.Abs(moveDiff.Y) > SystemParameters.MinimumVerticalDragDistance;
         }
 
         private T FindAncestor<T>(DependencyObject current) where T : DependencyObject
