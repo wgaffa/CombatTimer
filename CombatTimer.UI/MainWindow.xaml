@@ -67,7 +67,7 @@
         </StackPanel>
         
         <!-- Row 3 -->
-        <ItemsControl Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding EncounterTimer.Initiatives}">
+        <ItemsControl Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding EncounterTimer.Initiatives}" PreviewMouseLeftButtonDown="ItemsControl_PreviewMouseLeftDown" PreviewMouseMove="ItemsControl_PreviewMouseMove">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />
