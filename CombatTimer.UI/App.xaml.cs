@@ -19,7 +19,7 @@ namespace CombatTimer.UI
         {
             base.OnStartup(e);
 
-            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(File.ReadAllText("sample-encounter.json"));
+            IEncounterRepository encounterRepository = new InMemoryEncounterRepository();
 
             new MainWindow(encounterRepository).Show();
         }

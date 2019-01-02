@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IEncounterRepository.cs" />
+    <Compile Include="InMemoryEncounterRepository.cs" />
     <Compile Include="JsonEncounterRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
