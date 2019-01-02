@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Combat;
+using Combat.Repositories;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,10 +23,13 @@ namespace CombatTimer.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(IEncounterRepository repository)
         {
             InitializeComponent();
-            DataContext = new InitiativeTrackerViewModel();
+            
+            Encounter epicEncounter = repository.GetEncounter("Epic");
+            
+            DataContext = new InitiativeTrackerViewModel(epicEncounter);
         }
     }
 }

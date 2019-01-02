@@ -10,13 +10,13 @@ namespace CombatTimer.UI
 {
     class InitiativeTrackerViewModel : INotifyPropertyChanged
     {
-        public Encounter Encounter { get; private set; }
+        private Encounter _encounter;
         public EncounterTimer EncounterTimer { get; private set; }
 
-        public InitiativeTrackerViewModel()
+        public InitiativeTrackerViewModel(Encounter encounter)
         {
-            JsonEncounterRepository encounterRepository = new JsonEncounterRepository(File.ReadAllText("sample-encounter.json"));
-            Encounter = encounterRepository.GetEncounter("Epic");
+            _encounter = encounter ?? throw new ArgumentNullException(nameof(encounter));
+
             EncounterTimer = CreateNewCombat();
             
             NewCombatCommand = new DelegateCommand(OnNewCombatCommand);
@@ -28,7 +28,7 @@ namespace CombatTimer.UI
         private EncounterTimer CreateNewCombat()
         {
             List<InitiativeRoll> initiativeRolls = new List<InitiativeRoll>();
-            foreach (Character character in Encounter.Characters)
+            foreach (Character character in _encounter.Characters)
             {
                 initiativeRolls.Add(new InitiativeRoll(character));
             }

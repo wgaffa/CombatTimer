@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Combat.Repositories
 {
-    public class JsonEncounterRepository
+    public class JsonEncounterRepository : IEncounterRepository
     {
         private HashSet<Encounter> _encounters = new HashSet<Encounter>();
         
