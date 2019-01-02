@@ -8,12 +8,12 @@ using System.IO;
 
 namespace CombatTimer.UI
 {
-    class EncounterViewModel : INotifyPropertyChanged
+    class InitiativeTrackerViewModel : INotifyPropertyChanged
     {
         public Encounter Encounter { get; private set; }
         public EncounterTimer EncounterTimer { get; private set; }
 
-        public EncounterViewModel()
+        public InitiativeTrackerViewModel()
         {
             JsonEncounterRepository encounterRepository = new JsonEncounterRepository(File.ReadAllText("sample-encounter.json"));
             Encounter = encounterRepository.GetEncounter("Epic");
