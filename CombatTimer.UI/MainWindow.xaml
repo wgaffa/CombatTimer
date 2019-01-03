@@ -7,12 +7,23 @@
         xmlns:local="clr-namespace:CombatTimer.UI"
         xmlns:localConverters="clr-namespace:CombatTimer.UI.Converters"
         mc:Ignorable="d"
-        Title="Initiative Tracker" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Initiative Tracker" Height="450" Width="800" WindowStartupLocation="CenterScreen" Closed="Window_Closed">
     <Window.Resources>
         <localConverters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.EncounterDetails}" 
+                        CanExecute="EncounterDetails_CanExecute"
+                        Executed="EncounterDetails_Executed"
+                        />
+        <CommandBinding Command="Close"
+                        CanExecute="Close_CanExecute"
+                        Executed="Close_Executed"
+                        />
+    </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="Auto"/>
@@ -21,13 +32,27 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button Content="_New Combat" HorizontalAlignment="Left"
+        <!-- Row 0 -->
+        <Menu Grid.ColumnSpan="2">
+            <MenuItem Header="_File">
+                <MenuItem Header="E_xit" Command="Close"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="_Encounter Details..." Command="{x:Static local:MainWindow.EncounterDetails}" />
+            </MenuItem>
+        </Menu>
+        
+        <!-- Row 1 -->
+        <Button Grid.Row="1"
+                Content="_New Combat" HorizontalAlignment="Left"
                 Margin="10,10,0,0" VerticalAlignment="Top"
                 Command="{Binding NewCombatCommand}"/>
-        <Button Content="Begin Combat" HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding BeginCombatCommand}"/>
-
-        <TextBlock Grid.Column="1" HorizontalAlignment="Right" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding EncounterTimer.CurrentRound, StringFormat=Round: {0}}" VerticalAlignment="Top"/>
-        <StackPanel Grid.Row="1" DataContext="{Binding EncounterTimer.CurrentInitiative}"
+        <Button Grid.Row="1" Content="Begin Combat" HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding BeginCombatCommand}"/>
+        
+        <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding EncounterTimer.CurrentRound, StringFormat=Round: {0}}" VerticalAlignment="Top"/>
+        
+        <!-- Row 2 -->
+        <StackPanel Grid.Row="2" DataContext="{Binding EncounterTimer.CurrentInitiative}"
                     Visibility="{Binding Converter={StaticResource NullToVisibilityConverter}}">
             <StackPanel.Background>
                 <ImageBrush ImageSource="pack://application:,,,/Resources/Default_Profile_Picture.png" Stretch="UniformToFill" />
@@ -40,7 +65,9 @@
             <Button Content="_Ready/Delay"
                     Command="{Binding DataContext.DelayCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
         </StackPanel>
-        <ItemsControl Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding EncounterTimer.Initiatives}">
+        
+        <!-- Row 3 -->
+        <ItemsControl Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding EncounterTimer.Initiatives}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />

@@ -10,12 +10,12 @@ namespace CombatTimer.UI
 {
     class InitiativeTrackerViewModel : INotifyPropertyChanged
     {
-        private Encounter _encounter;
+        public Encounter CurrentEncounter { get; private set; }
         public EncounterTimer EncounterTimer { get; private set; }
 
         public InitiativeTrackerViewModel(Encounter encounter)
         {
-            _encounter = encounter ?? throw new ArgumentNullException(nameof(encounter));
+            CurrentEncounter = encounter ?? throw new ArgumentNullException(nameof(encounter));
 
             EncounterTimer = CreateNewCombat();
             
@@ -28,7 +28,7 @@ namespace CombatTimer.UI
         private EncounterTimer CreateNewCombat()
         {
             List<InitiativeRoll> initiativeRolls = new List<InitiativeRoll>();
-            foreach (Character character in _encounter.Characters)
+            foreach (Character character in CurrentEncounter.Characters)
             {
                 initiativeRolls.Add(new InitiativeRoll(character));
             }

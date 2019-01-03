@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CombatTimer.UI
 {
-    class EncounterViewModel : INotifyPropertyChanged
+    public class EncounterViewModel : INotifyPropertyChanged
     {
         private Encounter _currentEncounter;
         #region INotifyPropertyChanged
