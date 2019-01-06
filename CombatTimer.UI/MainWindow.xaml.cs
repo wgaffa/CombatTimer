@@ -169,7 +169,7 @@ namespace CombatTimer.UI
                 .ItemContainerGenerator
                 .ItemFromContainer(presenter);
 
-            EncounterViewModel encounterTimer = (EncounterViewModel)DataContext;
+            InitiativeTrackerViewModel encounterTimer = (InitiativeTrackerViewModel)DataContext;
             encounterTimer.MoveInitiative(draggedInitiative, droppedOnInitiative);
         }
     }

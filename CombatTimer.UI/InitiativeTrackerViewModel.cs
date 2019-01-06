@@ -35,6 +35,12 @@ namespace CombatTimer.UI
 
             return new EncounterTimer(initiativeRolls);
         }
+        
+        internal void MoveInitiative(InitiativeRoll source, InitiativeRoll target)
+        {
+            EncounterTimer.Move(source, target);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EncounterTimer)));
+        }
 
         #region Commands
         public DelegateCommand NewCombatCommand { get; private set; }
