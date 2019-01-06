@@ -86,7 +86,7 @@ namespace Combat
         {
             initiativeToResume.Status = InitiativeStatus.Active;
 
-            BumpInitiativeBeforeCurrent(initiativeToResume);
+            Move(initiativeToResume, CurrentInitiative);
 
             CurrentInitiative = initiativeToResume;
             CurrentInitiative.Status = InitiativeStatus.Active;
@@ -102,8 +102,12 @@ namespace Combat
             int nextInitiativeCount = target.RolledInitiative;
             int previousInitiativeCount = GetInitiativeOffset(-1, target)?.RolledInitiative ?? nextInitiativeCount + 20;
 
+            source.Priority = target.Priority + 1;
             int initiativeCountBetween = (nextInitiativeCount + previousInitiativeCount) / 2;
             source.RolledInitiative = initiativeCountBetween;
+
+            if (previousInitiativeCount == nextInitiativeCount)
+                GetInitiativeOffset(-1, target).Priority = source.Priority;
 
             SortInitiatives();
         }
@@ -125,21 +129,11 @@ namespace Combat
             return _initiatives.ElementAtOrDefault(index + offset);
         }
 
-        internal void BumpInitiativeBeforeCurrent(InitiativeRoll initiativeToResume)
-        {
-            int nextInitiative = CurrentInitiative.RolledInitiative;
-            int previousInitiative = GetInitiativeOffset(-1)?.RolledInitiative ?? nextInitiative + 20;
-
-            int initiativeBetween = (previousInitiative + nextInitiative) / 2;
-            initiativeToResume.RolledInitiative = initiativeBetween;
-
-            SortInitiatives();
-        }
-
         private void SortInitiatives()
         {
             _initiatives = _initiatives
                 .OrderByDescending(x => x.RolledInitiative)
+                .ThenByDescending(x => x.Priority)
                 .ThenByDescending(x => x.Character.Initiative)
                 .ToList();
 

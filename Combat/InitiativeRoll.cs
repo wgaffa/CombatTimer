@@ -55,6 +55,7 @@ namespace Combat
             }
         }
         public InitiativeStatus Status { get; set; }
+        public int Priority { get; internal set; }
 
         public int CompareTo(InitiativeRoll other)
         {
