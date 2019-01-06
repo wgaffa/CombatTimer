@@ -75,7 +75,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Padding="5" Width="100">
+                    <Border Padding="5" Width="100" DragEnter="InitiativeRoll_DragEnter" AllowDrop="True" Drop="InitiativeRoll_Drop">
                         <Border.Background>
                             <ImageBrush ImageSource="Resources/Default_Profile_Picture.png" Stretch="Uniform"/>
                         </Border.Background>

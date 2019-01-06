@@ -149,5 +149,28 @@ namespace CombatTimer.UI
 
             return null;
         }
+
+        private void InitiativeRoll_DragEnter(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent("initiativeRoll"))
+                e.Effects = DragDropEffects.None;
+        }
+
+        private void InitiativeRoll_Drop(object sender, DragEventArgs e)
+        {
+            if (!(e.Data.GetDataPresent("initiativeRoll")))
+                return;
+
+            ItemsControl initiativeList = FindAncestor<ItemsControl>((DependencyObject)sender);
+            InitiativeRoll draggedInitiative = e.Data.GetData("initiativeRoll") as InitiativeRoll;
+            ContentPresenter presenter = FindAncestor<ContentPresenter>((DependencyObject)sender);
+            InitiativeRoll droppedOnInitiative = 
+                (InitiativeRoll)initiativeList
+                .ItemContainerGenerator
+                .ItemFromContainer(presenter);
+
+            EncounterViewModel encounterTimer = (EncounterViewModel)DataContext;
+            encounterTimer.MoveInitiative(draggedInitiative, droppedOnInitiative);
+        }
     }
 }

@@ -94,6 +94,20 @@ namespace Combat
             return initiativeToResume;
         }
 
+        public void Move(InitiativeRoll source, InitiativeRoll target)
+        {
+            if (source == target) return;
+            if (!_initiatives.Contains(source) || !_initiatives.Contains(target)) return;
+
+            int nextInitiativeCount = target.RolledInitiative;
+            int previousInitiativeCount = GetInitiativeOffset(-1, target)?.RolledInitiative ?? nextInitiativeCount + 20;
+
+            int initiativeCountBetween = (nextInitiativeCount + previousInitiativeCount) / 2;
+            source.RolledInitiative = initiativeCountBetween;
+
+            SortInitiatives();
+        }
+
         private InitiativeRoll PauseCurrentInitiative()
         {
             CurrentInitiative.Status = InitiativeStatus.Paused;
@@ -105,9 +119,9 @@ namespace Combat
             return CurrentInitiative;
         }
 
-        private InitiativeRoll GetInitiativeOffset(int offset = 1)
+        private InitiativeRoll GetInitiativeOffset(int offset = 1, InitiativeRoll target = null)
         {
-            int index = _initiatives.IndexOf(CurrentInitiative);
+            int index = _initiatives.IndexOf(target ?? CurrentInitiative);
             return _initiatives.ElementAtOrDefault(index + offset);
         }
 
